@@ -1,91 +1,109 @@
-# Sistema Bancário em Python
+class Banco:
+    def __init__(self):
+        self.saldo = 0
+        self.saques_realizados = 0
+        self.extrato = []
 
-# Inicialização do saldo da conta
-saldo = 0.0
+    def depositar(self, valor):
+        """
+        Realiza um depósito na conta bancária.
 
-# Função para realizar depósito na conta
-def depositar(valor):
-    """
-    Função para realizar um depósito na conta.
-    
-    Parâmetros:
-    valor (float): Valor a ser depositado na conta.
-    
-    Retorno:
-    bool: True se o depósito for bem-sucedido, False caso contrário.
-    """
-    global saldo
-    if valor > 0:
-        saldo += valor
-        return True
-    else:
-        return False
+        Args:
+            valor (float): O valor a ser depositado.
 
-# Função para realizar saque na conta
-def sacar(valor):
-    """
-    Função para realizar um saque na conta.
-    
-    Parâmetros:
-    valor (float): Valor a ser sacado da conta.
-    
-    Retorno:
-    bool: True se o saque for bem-sucedido, False caso contrário.
-    """
-    global saldo
-    if valor > 0 and saldo >= valor:
-        saldo -= valor
-        return True
-    else:
-        return False
+        Returns:
+            bool: True se o depósito for bem-sucedido, False caso contrário.
+        """
+        if valor > 0:
+            self.saldo += valor
+            self.extrato.append(f"Depósito: R$ {valor:.2f}")
+            return True
+        else:
+            return False
 
-# Função para exibir o extrato da conta
-def extrato():
-    """
-    Função para exibir o extrato da conta.
-    """
-    global saldo
-    if saldo == 0:
-        print("Não foram realizadas movimentações")
-    else:
-        print(f"Extrato da Conta:")
-        print(f"Saldo atual: R$ {saldo:.2f}")
+    def sacar(self, valor):
+        """
+        Realiza um saque na conta bancária.
 
-# Função principal para interagir com o usuário
+        Args:
+            valor (float): O valor a ser sacado.
+
+        Returns:
+            bool: True se o saque for bem-sucedido, False caso contrário.
+        """
+        if self.saques_realizados < 3 and 0 < valor <= 500 and self.saldo >= valor:
+            self.saldo -= valor
+            self.extrato.append(f"Saque: -R$ {valor:.2f}")
+            self.saques_realizados += 1
+            return True
+        else:
+            return False
+
+    def consultar_saldo(self):
+        """
+        Consulta o saldo atual da conta bancária.
+
+        Returns:
+            float: O saldo disponível na conta.
+        """
+        return self.saldo
+
+    def consultar_extrato(self):
+        """
+        Consulta o extrato das movimentações na conta bancária.
+
+        Returns:
+            str: Uma string com o extrato das movimentações.
+        """
+        if self.extrato:
+            return "\n".join(self.extrato)
+        else:
+            return "Não foram realizadas movimentações"
+
+
 def main():
-    """
-    Função principal para interagir com o usuário e executar operações bancárias.
-    """
-    print("Bem-vindo(a) ao Sistema Bancário!")
-    
+    banco = Banco()
+
     while True:
-        print("\nOpções:")
-        print("1 - Depositar")
-        print("2 - Sacar")
-        print("3 - Extrato")
-        print("4 - Sair")
-        
-        opcao = int(input("Escolha uma opção: "))
-        
-        if opcao == 1:
-            valor = float(input("Digite o valor a ser depositado: "))
-            if depositar(valor):
+        print("\n=== Menu ===")
+        print("1. Depositar")
+        print("2. Sacar")
+        print("3. Consultar Saldo")
+        print("4. Consultar Extrato")
+        print("5. Sair")
+
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == "1":
+            valor = float(input("Digite o valor do depósito: "))
+            if banco.depositar(valor):
                 print("Depósito realizado com sucesso!")
             else:
-                print("Valor de depósito inválido!")
-        elif opcao == 2:
-            valor = float(input("Digite o valor a ser sacado: "))
-            if sacar(valor):
+                print("Valor de depósito inválido.")
+
+        elif escolha == "2":
+            valor = float(input("Digite o valor do saque: "))
+            if banco.sacar(valor):
                 print("Saque realizado com sucesso!")
             else:
-                print("Saque não autorizado. Verifique o saldo.")
-        elif opcao == 3:
-            extrato()
-        elif opcao == 4:
-            print("Saindo do Sistema Bancário. Até logo!")
+                print("Saque inválido.")
+
+        elif escolha == "3":
+            saldo = banco.consultar_saldo()
+            print(f"Saldo disponível: R$ {saldo:.2f}")
+
+        elif escolha == "4":
+            extrato = banco.consultar_extrato()
+            print("Extrato:")
+            print(extrato)
+
+        elif escolha == "5":
+            print("Saindo...")
             break
+
         else:
             print("Opção inválida. Escolha novamente.")
+
 
 if __name__ == "__main__":
     main()
